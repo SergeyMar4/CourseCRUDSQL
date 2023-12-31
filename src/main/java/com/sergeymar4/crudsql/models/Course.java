@@ -1,6 +1,6 @@
 package com.sergeymar4.crudsql.models;
 
-public class Courses {
+public class Course {
     private int id;
     private String title;
     private Teacher teacher;

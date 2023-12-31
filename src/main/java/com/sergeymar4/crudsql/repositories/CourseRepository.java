@@ -1,74 +1,70 @@
 package com.sergeymar4.crudsql.repositories;
 
+import com.sergeymar4.crudsql.models.Course;
 import com.sergeymar4.crudsql.models.Student;
 import com.sergeymar4.crudsql.providers.DatabaseManager;
 
-import java.sql.*;
+import javax.xml.crypto.Data;
+import java.net.ConnectException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class StudentRepository {
+public class CourseRepository {
 
-    public ArrayList<Student> getAll() {
+    public ArrayList<Course> getAll() {
         Connection connection = DatabaseManager.getConnection();
-        String sql = "select * from students";
-        ArrayList<Student> students = new ArrayList<>();
+        String sql = "select * from courses";
+        ArrayList<Course> courses = new ArrayList<>();
 
         try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet resultSet = ps.executeQuery();
 
             while (resultSet.next()) {
-                Student student = new Student();
-                student.setId(resultSet.getInt("id"));
-                student.setAge(resultSet.getInt("age"));
-                student.setFirstName(resultSet.getString("firstName"));
-                student.setLastName(resultSet.getString("lastName"));
-                students.add(student);
+                Course course = new Course();
+                course.setId(resultSet.getInt("id"));
+                course.setTitle(resultSet.getString("title"));
+                courses.add(course);
             }
-
         } catch (SQLException e) {
             System.out.println(e);
         } finally {
             DatabaseManager.closeConnection();
         }
 
-        return students;
+        return courses;
     }
 
-    public Student getById(int id) {
+    public Course getById(int id) {
         Connection connection = DatabaseManager.getConnection();
-        String sql = "select * from students where id = ?";
-        Student student = new Student();
+        String sql = "select * from courses where id = ?";
+        Course course = new Course();
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet resultSet = ps.executeQuery();
-
-            while (resultSet.next()) {
-                student.setAge(resultSet.getInt("age"));
-                student.setFirstName(resultSet.getString("firstName"));
-                student.setLastName(resultSet.getString("lastName"));
-                student.setId(resultSet.getInt("id"));
-            }
-        } catch(SQLException e) {
+            course.setId(resultSet.getInt("id"));
+            course.setTitle(resultSet.getString("title"));
+        } catch (SQLException e) {
             System.out.println(e);
         } finally {
             DatabaseManager.closeConnection();
         }
 
-        return student;
+        return course;
     }
 
-    public void create(String firstName, String lastName, int age) {
+    public void create(String title) {
         Connection connection = DatabaseManager.getConnection();
-        String sql = "insert into students (firstName, lastName, age) values (?, ?, ?)";
+        String sql = "insert into courses (title) values(?)";
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, firstName);
-            ps.setString(2, lastName);
-            ps.setInt(3, age);
+            ps.setString(1, title);
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);
@@ -77,16 +73,14 @@ public class StudentRepository {
         }
     }
 
-    public void update(int id, String firstName, String lastName, int age) {
+    public void update(int id, String title) {
         Connection connection = DatabaseManager.getConnection();
-        String sql = "update students set firstName = ?, lastName = ?, age = ? where id = ?";
+        String sql = "update course set title = ? where id = ?";
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, firstName);
-            ps.setString(2, lastName);
-            ps.setInt(3, age);
-            ps.setInt(4, id);
+            ps.setString(1, title);
+            ps.setInt(2, id);
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);
@@ -97,7 +91,7 @@ public class StudentRepository {
 
     public void delete(int id) {
         Connection connection = DatabaseManager.getConnection();
-        String sql = "delete from students where id = ?";
+        String sql = "delete course from courses where id = ?";
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
