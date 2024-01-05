@@ -2,6 +2,7 @@ package com.sergeymar4.crudsql.repositories;
 
 import com.sergeymar4.crudsql.models.Course;
 import com.sergeymar4.crudsql.models.Student;
+import com.sergeymar4.crudsql.models.Teacher;
 import com.sergeymar4.crudsql.providers.DatabaseManager;
 
 import javax.xml.crypto.Data;
@@ -17,6 +18,7 @@ public class CourseRepository {
     public ArrayList<Course> getAll() {
         Connection connection = DatabaseManager.getConnection();
         String sql = "select * from courses";
+        String sql2 = "select * from teachers where id = ?";
         ArrayList<Course> courses = new ArrayList<>();
 
         try {
@@ -27,6 +29,17 @@ public class CourseRepository {
                 Course course = new Course();
                 course.setId(resultSet.getInt("id"));
                 course.setTitle(resultSet.getString("title"));
+
+                PreparedStatement ps2 = connection.prepareStatement(sql2);
+                ps2.setInt(1, resultSet.getInt("teacher_id"));
+                ResultSet resultSet2 = ps2.executeQuery();
+                Teacher teacher = new Teacher();
+                teacher.setId(resultSet2.getInt("id"));
+                teacher.setAge(resultSet2.getInt("age"));
+                teacher.setFirstName(resultSet2.getString("firstName"));
+                teacher.setLastName(resultSet2.getString("lastName"));
+                teacher.setSpecialization(resultSet2.getString("specialization"));
+                course.setTeacher(teacher);
                 courses.add(course);
             }
         } catch (SQLException e) {
@@ -41,6 +54,7 @@ public class CourseRepository {
     public Course getById(int id) {
         Connection connection = DatabaseManager.getConnection();
         String sql = "select * from courses where id = ?";
+        String sql2 = "select * from teachers where id = ?";
         Course course = new Course();
 
         try {
@@ -49,6 +63,17 @@ public class CourseRepository {
             ResultSet resultSet = ps.executeQuery();
             course.setId(resultSet.getInt("id"));
             course.setTitle(resultSet.getString("title"));
+
+            PreparedStatement ps2 = connection.prepareStatement(sql2);
+            ps2.setInt(1, resultSet.getInt("teacher_id"));
+            ResultSet resultSet2 = ps2.executeQuery();
+            Teacher teacher = new Teacher();
+            teacher.setId(resultSet2.getInt("id"));
+            teacher.setAge(resultSet2.getInt("age"));
+            teacher.setFirstName(resultSet2.getString("firstName"));
+            teacher.setLastName(resultSet2.getString("lastName"));
+            teacher.setSpecialization(resultSet2.getString("specialization"));
+            course.setTeacher(teacher);
         } catch (SQLException e) {
             System.out.println(e);
         } finally {
@@ -58,13 +83,14 @@ public class CourseRepository {
         return course;
     }
 
-    public void create(String title) {
+    public void create(String title, int teacher_id) {
         Connection connection = DatabaseManager.getConnection();
-        String sql = "insert into courses (title) values(?)";
+        String sql = "insert into courses (title, teacher_id) values(?, ?)";
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, title);
+            ps.setInt(2, teacher_id);
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);
@@ -75,7 +101,7 @@ public class CourseRepository {
 
     public void update(int id, String title) {
         Connection connection = DatabaseManager.getConnection();
-        String sql = "update course set title = ? where id = ?";
+        String sql = "update courses set title = ? where id = ?";
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -91,7 +117,7 @@ public class CourseRepository {
 
     public void delete(int id) {
         Connection connection = DatabaseManager.getConnection();
-        String sql = "delete course from courses where id = ?";
+        String sql = "delete from courses where id = ?";
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);

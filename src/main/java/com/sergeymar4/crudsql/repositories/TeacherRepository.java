@@ -69,6 +69,20 @@ public class TeacherRepository {
             teacher.setLastName(resultSet.getString("lastName"));
             teacher.setSpecialization(resultSet.getString("specialization"));
             teacher.setId(resultSet.getInt("id"));
+
+            ArrayList<Course> courses = new ArrayList<>();
+            PreparedStatement ps2 = connection.prepareStatement(sql2);
+            ps2.setInt(1, id);
+            ResultSet resultSet2 = ps2.executeQuery();
+
+            while (resultSet2.next()) {
+                Course course = new Course();
+                course.setTitle(resultSet2.getString("title"));
+                course.setId(resultSet2.getInt("id"));
+                courses.add(course);
+            }
+
+            teacher.setCourses(courses);
         } catch (SQLException e) {
             System.out.println(e);
         } finally {
@@ -95,7 +109,7 @@ public class TeacherRepository {
 
     public void update(int id, String firstName, String lastName, int age, String specialization) {
         Connection connection = DatabaseManager.getConnection();
-        String sql = "update from teachers set firstName = ?, lastName = ?, age = ?, specialization where id = ?";
+        String sql = "update teachers set firstName = ?, lastName = ?, age = ?, specialization = ? where id = ?";
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -122,6 +136,7 @@ public class TeacherRepository {
             ps.setString(2, lastName);
             ps.setInt(3, age);
             ps.setString(4,specialization);
+            ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);
         } finally {

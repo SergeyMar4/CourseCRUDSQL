@@ -1,10 +1,21 @@
 package com.sergeymar4.crudsql.models;
 
+import java.util.ArrayList;
+
 public class Student {
     private int id;
     private int age;
     private String firstName;
     private String LastName;
+    private ArrayList<Course> courses;
+
+    public ArrayList<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(ArrayList<Course> courses) {
+        this.courses = courses;
+    }
 
     public int getId() {
         return id;
@@ -34,6 +45,10 @@ public class Student {
         return LastName;
     }
 
+    public void setLastName(String lastName) {
+        LastName = lastName;
+    }
+
     @Override
     public String toString() {
         return "Student{" +
@@ -41,10 +56,7 @@ public class Student {
                 ", age=" + age +
                 ", firstName='" + firstName + '\'' +
                 ", LastName='" + LastName + '\'' +
+                ", courses=" + courses +
                 '}';
-    }
-
-    public void setLastName(String lastName) {
-        LastName = lastName;
     }
 }

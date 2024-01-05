@@ -20,8 +20,8 @@ public class CourseController {
         return courseRepository.getById(id);
     }
 
-    public void create(String title) {
-        courseRepository.create(title);
+    public void create(String title, int id) {
+        courseRepository.create(title, id);
     }
 
     public void update(int id, String title) {

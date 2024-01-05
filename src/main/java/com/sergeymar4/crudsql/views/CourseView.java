@@ -35,7 +35,9 @@ public class CourseView {
             } else if (s.equals("3")) {
                 System.out.println("Введите название дисциплины = ");
                 String title = scanner.next();
-                courseController.create(title);
+                System.out.println("Введите id = ");
+                int id = scanner.nextInt();
+                courseController.create(title, id);
             } else if (s.equals("4")) {
                 System.out.println("Введите id дисциплины = ");
                 int id = scanner.nextInt();
